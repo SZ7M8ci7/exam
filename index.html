@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ダメージ入力フォーム</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h2>バフ設定</h2>
+  <div class="buff-section">
+    <table>
+      <thead>
+        <tr>
+          <th>ATK</th>
+          <th>算出値</th>
+          <th>ATK(バフ系)</th>
+          <th>算出値</th>
+          <th>ダメージ(バフ系)</th>
+          <th>算出値</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ATK</td>
+          <td><input id="atk" type="number" value="1000"></td>
+          <td>ATKUP1</td>
+          <td><input id="atkup1" type="number" value="0"></td>
+          <td>ダメUP1</td>
+          <td><input id="dameup1" type="number" value="0"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td>ATKUP2</td>
+          <td><input id="atkup2" type="number" value="0"></td>
+          <td>ダメUP2</td>
+          <td><input id="dameup2" type="number" value="0"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td>ATKUP3</td>
+          <td><input id="atkup3" type="number" value="0"></td>
+          <td>ダメUP3</td>
+          <td><input id="dameup3" type="number" value="0"></td>
+        </tr>
+      </tbody>
+    </table>
+    <button id="calculateButton" class="calculate-button">算出開始</button>
+  </div>
+
+  <h2>ダメージ</h2>
+  <table>
+    <thead>
+      <tr>
+        <th class="col-num">#</th>
+        <th class="col-attack">攻撃</th>
+        <th class="col-attr">属性</th>
+        <th class="col-buff">バフ1</th>
+        <th class="col-buff">バフ2</th>
+        <th class="col-buff">バフ3</th>
+        <th class="col-damage">単発ダメージ値（カンマ区切り）</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  <script src="script.js"></script>
+</body>
+</html>
