@@ -310,7 +310,7 @@ function optimizeParameters(rows, initialParams) {
   let noImprovementCount = 0;
 
   // 焼きなまし法のパラメータ
-  const initialTemp = 10000.0;
+  const initialTemp = 1000000.0;
   const finalTemp = 0.001;
   const coolingRate = 0.999999;
   const maxIterations = 10000000;
@@ -591,12 +591,43 @@ function updateResults() {
   updateBuffValue('dameup3', result.damageUpValues[2]);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+async function loadInitialDataFromCSV() {
+  try {
+    const response = await fetch('initial_data.csv');
+    if (!response.ok) {
+      console.log('CSVファイルが見つかりません。デフォルトの空のテーブルを使用します。');
+      return null;
+    }
+    const csvText = await response.text();
+    const rows = csvText.split('\n').filter(row => row.trim() !== '');
+    const data = rows.map(row => {
+      const columns = row.split(',').map(item => item.trim());
+      const [attack, attribute, buff1, buff2, buff3, ...damages] = columns;
+      return {
+        attack,
+        attribute,
+        buff1,
+        buff2,
+        buff3,
+        damages: damages.map(d => parseFloat(d)).filter(d => !isNaN(d))
+      };
+    });
+    return data;
+  } catch (error) {
+    console.log('CSVファイルの読み込みに失敗しました。デフォルトの空のテーブルを使用します。', error);
+    return null;
+  }
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
   const damageTableBody = document.querySelector('h2:last-of-type + table tbody');
   
-  // 空の行を追加
+  // CSVから初期データを読み込む
+  const initialData = await loadInitialDataFromCSV();
+  
+  // 行を追加（初期データがある場合はそれを使用）
   for (let i = 0; i < 10; i++) {
-    const row = makeRow(i);
+    const row = makeRow(i, initialData ? initialData[i] : null);
     damageTableBody.appendChild(row);
   }
 
