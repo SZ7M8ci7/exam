@@ -118,36 +118,36 @@ function calculateError(params, rowData) {
     if (row.buff1.startsWith('ATKUP')) {
       const index = parseInt(row.buff1.replace('ATKUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowAtkupValues[index] = atkupValues[index];
+        rowAtkupValues[index] += atkupValues[index];
       }
     } else if (row.buff1.startsWith('ダメUP')) {
       const index = parseInt(row.buff1.replace('ダメUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowDamageUpValues[index] = damageUpValues[index];
+        rowDamageUpValues[index] += damageUpValues[index];
       }
     }
 
     if (row.buff2.startsWith('ATKUP')) {
       const index = parseInt(row.buff2.replace('ATKUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowAtkupValues[index] = atkupValues[index];
+        rowAtkupValues[index] += atkupValues[index];
       }
     } else if (row.buff2.startsWith('ダメUP')) {
       const index = parseInt(row.buff2.replace('ダメUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowDamageUpValues[index] = damageUpValues[index];
+        rowDamageUpValues[index] += damageUpValues[index];
       }
     }
 
     if (row.buff3.startsWith('ATKUP')) {
       const index = parseInt(row.buff3.replace('ATKUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowAtkupValues[index] = atkupValues[index];
+        rowAtkupValues[index] += atkupValues[index];
       }
     } else if (row.buff3.startsWith('ダメUP')) {
       const index = parseInt(row.buff3.replace('ダメUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowDamageUpValues[index] = damageUpValues[index];
+        rowDamageUpValues[index] += damageUpValues[index];
       }
     }
 
@@ -177,36 +177,36 @@ function calculateRowErrors(params, rowData) {
     if (row.buff1.startsWith('ATKUP')) {
       const index = parseInt(row.buff1.replace('ATKUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowAtkupValues[index] = atkupValues[index];
+        rowAtkupValues[index] += atkupValues[index];
       }
     } else if (row.buff1.startsWith('ダメUP')) {
       const index = parseInt(row.buff1.replace('ダメUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowDamageUpValues[index] = damageUpValues[index];
+        rowDamageUpValues[index] += damageUpValues[index];
       }
     }
 
     if (row.buff2.startsWith('ATKUP')) {
       const index = parseInt(row.buff2.replace('ATKUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowAtkupValues[index] = atkupValues[index];
+        rowAtkupValues[index] += atkupValues[index];
       }
     } else if (row.buff2.startsWith('ダメUP')) {
       const index = parseInt(row.buff2.replace('ダメUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowDamageUpValues[index] = damageUpValues[index];
+        rowDamageUpValues[index] += damageUpValues[index];
       }
     }
 
     if (row.buff3.startsWith('ATKUP')) {
       const index = parseInt(row.buff3.replace('ATKUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowAtkupValues[index] = atkupValues[index];
+        rowAtkupValues[index] += atkupValues[index];
       }
     } else if (row.buff3.startsWith('ダメUP')) {
       const index = parseInt(row.buff3.replace('ダメUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowDamageUpValues[index] = damageUpValues[index];
+        rowDamageUpValues[index] += damageUpValues[index];
       }
     }
 
@@ -495,36 +495,36 @@ function updateResults() {
     if (pattern.buff1.startsWith('ATKUP')) {
       const index = parseInt(pattern.buff1.replace('ATKUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowAtkupValues[index] = result.atkupValues[index];
+        rowAtkupValues[index] += result.atkupValues[index];
       }
     } else if (pattern.buff1.startsWith('ダメUP')) {
       const index = parseInt(pattern.buff1.replace('ダメUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowDamageUpValues[index] = result.damageUpValues[index];
+        rowDamageUpValues[index] += result.damageUpValues[index];
       }
     }
 
     if (pattern.buff2.startsWith('ATKUP')) {
       const index = parseInt(pattern.buff2.replace('ATKUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowAtkupValues[index] = result.atkupValues[index];
+        rowAtkupValues[index] += result.atkupValues[index];
       }
     } else if (pattern.buff2.startsWith('ダメUP')) {
       const index = parseInt(pattern.buff2.replace('ダメUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowDamageUpValues[index] = result.damageUpValues[index];
+        rowDamageUpValues[index] += result.damageUpValues[index];
       }
     }
 
     if (pattern.buff3.startsWith('ATKUP')) {
       const index = parseInt(pattern.buff3.replace('ATKUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowAtkupValues[index] = result.atkupValues[index];
+        rowAtkupValues[index] += result.atkupValues[index];
       }
     } else if (pattern.buff3.startsWith('ダメUP')) {
       const index = parseInt(pattern.buff3.replace('ダメUP', '')) - 1;
       if (index >= 0 && index < 3) {
-        rowDamageUpValues[index] = result.damageUpValues[index];
+        rowDamageUpValues[index] += result.damageUpValues[index];
       }
     }
 
