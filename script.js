@@ -1,5 +1,19 @@
 const buffNames = ["", "ATKUP1", "ATKUP2", "ATKUP3", "ダメUP1", "ダメUP2", "ダメUP3"];
 
+const validDamageUpValues = [
+  1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9,
+  3.0, 3.3, 3.5, 3.6, 3.8, 3.9, 4.0, 4.2, 4.3, 4.5, 4.8, 5.0, 5.1, 5.4, 5.7, 5.8,
+  6.0, 6.1, 6.5, 6.9, 7.3, 7.4, 7.6, 7.8, 8.0, 8.3, 8.4, 8.5, 8.7, 8.8, 9.0, 9.2, 9.5, 9.6,
+  10.0, 10.1, 10.2, 10.5, 10.8, 11.0, 11.4, 11.5, 12.0, 12.5, 12.6, 13.2, 13.5, 13.8,
+  14.4, 14.5, 15.0, 15.5, 16.2, 16.5, 17.4, 17.5, 18.5, 18.6, 19.5, 19.8,
+  20.5, 21.0, 21.5, 22.2, 22.5, 23.4, 24.6, 25.8, 27.0
+];
+
+const validAtkUpValues = [
+  5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0,
+  21.5, 23.0, 24.5, 26.0, 27.5, 29.0, 30.5, 32.0, 33.5, 34.0, 35.0, 36.0, 38.0, 40.0, 42.0, 44.0, 46.0, 48.0, 50.0
+];
+
 const attackMultipliers = {
   "弱単発": { power: 0.75, combo: 1.0 },
   "強単発": { power: 1.0, combo: 1.0 },
@@ -154,11 +168,31 @@ function calculateError(params, rowData) {
     const damage = calculateDamage(atk, rowAtkupValues, rowDamageUpValues, row.attackType, row.attribute);
     const rowError = row.damages.reduce((sum, d) => sum + Math.pow(d - damage, 2), 0);
     
-    // ダメUPの誤差に重みを付ける
-    const hasDamageUp = row.buff1.startsWith('ダメUP') || row.buff2.startsWith('ダメUP') || row.buff3.startsWith('ダメUP');
-    const weight = hasDamageUp ? 1000.0 : 1.0;  // ダメUPの場合は1000倍の重み
+    // より適切な重み付けを計算
+    let weight = 1.0;
     
-    totalSquaredError += rowError * weight;
+    // ダメUPバフの数をカウント
+    const damageUpCount = [row.buff1, row.buff2, row.buff3]
+      .filter(buff => buff && buff.startsWith('ダメUP')).length;
+    
+    // ATKUPバフの数をカウント  
+    const atkUpCount = [row.buff1, row.buff2, row.buff3]
+      .filter(buff => buff && buff.startsWith('ATKUP')).length;
+    
+    // バフの組み合わせに応じた重み付け
+    if (damageUpCount > 0) {
+      // ダメUPバフがある場合は、バフ数と平均ダメージ値に応じて重みを調整
+      const avgDamage = row.damages.reduce((sum, d) => sum + d, 0) / row.damages.length;
+      const damageScale = Math.max(1.0, avgDamage / 1000); // ダメージが1000以上の場合は重みを増加
+      weight = Math.pow(100, damageUpCount) * damageScale; // ダメUPバフ1つにつき50倍、複数なら指数的に増加
+    } else if (atkUpCount > 0) {
+      weight = 1;
+    }
+    // 相対誤差も考慮（ダメージが大きいほど相対的な重要度を調整）
+    const avgDamage = row.damages.reduce((sum, d) => sum + d, 0) / row.damages.length;
+    const relativeErrorWeight = Math.max(0.1, Math.min(10.0, 1000 / avgDamage)); // 相対誤差の重み
+    
+    totalSquaredError += rowError * weight * relativeErrorWeight;
   }
 
   return totalSquaredError;
@@ -293,6 +327,26 @@ function optimizeParameters(rows, initialParams) {
     };
   }
 
+  // 使用されているバフタイプを確認
+  const usedBuffs = new Set();
+  rowData.forEach(row => {
+    if (row.buff1 && row.buff1 !== '') usedBuffs.add(row.buff1);
+    if (row.buff2 && row.buff2 !== '') usedBuffs.add(row.buff2);
+    if (row.buff3 && row.buff3 !== '') usedBuffs.add(row.buff3);
+  });
+
+  // どのバフタイプが最適化対象かを決定
+  const optimizeAtkup = [
+    usedBuffs.has('ATKUP1'),
+    usedBuffs.has('ATKUP2'),
+    usedBuffs.has('ATKUP3')
+  ];
+  const optimizeDamageUp = [
+    usedBuffs.has('ダメUP1'),
+    usedBuffs.has('ダメUP2'),
+    usedBuffs.has('ダメUP3')
+  ];
+
   // 初期値の設定
   let currentParams = initialParams ? {
     atk: parseFloat(initialParams.atk),
@@ -310,26 +364,84 @@ function optimizeParameters(rows, initialParams) {
   let noImprovementCount = 0;
 
   // 焼きなまし法のパラメータ
-  const initialTemp = 1000000.0;
+  const initialTemp = 1000.0;
   const finalTemp = 0.001;
-  const coolingRate = 0.999999;
+  const coolingRate = 0.99999;
   const maxIterations = 10000000;
   let temperature = initialTemp;
 
+
+  // 最も近い有効なダメUP値を見つける関数
+  function findNearestValidDamageUp(value) {
+    let nearest = validDamageUpValues[0];
+    let minDiff = Math.abs(value - nearest);
+    for (const validValue of validDamageUpValues) {
+      const diff = Math.abs(value - validValue);
+      if (diff < minDiff) {
+        minDiff = diff;
+        nearest = validValue;
+      }
+    }
+    return nearest;
+  }
+
+  // 最も近い有効なATKUP値を見つける関数
+  function findNearestValidAtkUp(value) {
+    let nearest = validAtkUpValues[0];
+    let minDiff = Math.abs(value - nearest);
+    for (const validValue of validAtkUpValues) {
+      const diff = Math.abs(value - validValue);
+      if (diff < minDiff) {
+        minDiff = diff;
+        nearest = validValue;
+      }
+    }
+    return nearest;
+  }
 
   for (let iteration = 0; iteration < maxIterations; iteration++) {
     // 新しい解を生成（温度に応じて探索範囲を調整）
     const newParams = {
       atk: currentParams.atk + (Math.random() - 0.5) * 50 * temperature,
-      atkupValues: currentParams.atkupValues.map(v => v + (Math.random() - 0.5) * 2 * temperature),
-      damageUpValues: currentParams.damageUpValues.map(v => v + (Math.random() - 0.5) * 1 * temperature)
+      atkupValues: currentParams.atkupValues.map((v, i) => {
+        if (!optimizeAtkup[i]) return v;
+        
+        // 温度が高い場合はランダムに選択、低い場合は近傍探索
+        if (temperature > initialTemp * 0.1) {
+          // 高温時：ランダムに有効な値を選択
+          return validAtkUpValues[Math.floor(Math.random() * validAtkUpValues.length)];
+        } else {
+          // 低温時：現在値の近傍から選択
+          const candidate = v + (Math.random() - 0.5) * 5 * temperature;
+          return findNearestValidAtkUp(candidate);
+        }
+      }),
+      damageUpValues: currentParams.damageUpValues.map((v, i) => {
+        if (!optimizeDamageUp[i]) return v;
+        
+        // 温度が高い場合はランダムに選択、低い場合は近傍探索
+        if (temperature > initialTemp * 0.1) {
+          // 高温時：ランダムに有効な値を選択
+          return validDamageUpValues[Math.floor(Math.random() * validDamageUpValues.length)];
+        } else {
+          // 低温時：現在値の近傍から選択
+          const candidate = v + (Math.random() - 0.5) * 2 * temperature;
+          return findNearestValidDamageUp(candidate);
+        }
+      })
     };
 
     // 制約条件の適用
     newParams.atk = Math.max(500, Math.min(10000, newParams.atk));
     for (let i = 0; i < 3; i++) {
-      newParams.atkupValues[i] = Math.max(0, Math.min(50, newParams.atkupValues[i]));
-      newParams.damageUpValues[i] = Math.max(0, Math.min(30, newParams.damageUpValues[i]));
+      if (optimizeAtkup[i]) {
+        // ATKUP値は既に有効な値が設定されているので、範囲チェックのみ
+        newParams.atkupValues[i] = findNearestValidAtkUp(newParams.atkupValues[i]);
+      }
+      if (optimizeDamageUp[i]) {
+        // ダメUP値は既に有効な値が設定されているので、範囲チェックのみ
+        newParams.damageUpValues[i] = findNearestValidDamageUp(newParams.damageUpValues[i]);
+      }
     }
 
     const newError = calculateError(newParams, rowData);
