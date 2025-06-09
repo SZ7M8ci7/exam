@@ -11,8 +11,55 @@ const validDamageUpValues = [
 
 const validAtkUpValues = [
   5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0,
-  21.5, 23.0, 24.5, 26.0, 27.5, 29.0, 30.5, 32.0, 33.5, 34.0, 35.0, 36.0, 38.0, 40.0, 42.0, 44.0, 46.0, 48.0, 50.0
+  21.5, 23.0, 24.5, 26.0, 27.5, 29.0, 30.5, 32.0, 33.5, 34.0, 35.0, 36.0, 38.0, 40.0, 42.0, 44.0, 46.0, 48.0, 50.0,
+  54.0, 58.0, 62.0, 66.0, 70.0, 74.0, 78.0, 82.0, 86.0, 90.0
 ];
+
+// ATKUPバフのレベル・サイズ対応表
+const atkUpLevels = {
+  5.5: [{lv: 1, size: "極小"}], 6.0: [{lv: 2, size: "極小"}], 6.5: [{lv: 3, size: "極小"}], 7.0: [{lv: 4, size: "極小"}], 7.5: [{lv: 5, size: "極小"}],
+  8.0: [{lv: 6, size: "極小"}], 8.5: [{lv: 7, size: "極小"}], 9.0: [{lv: 8, size: "極小"}], 9.5: [{lv: 9, size: "極小"}], 10.0: [{lv: 10, size: "極小"}],
+  11.0: [{lv: 1, size: "小"}], 12.0: [{lv: 2, size: "小"}], 13.0: [{lv: 3, size: "小"}], 14.0: [{lv: 4, size: "小"}], 15.0: [{lv: 5, size: "小"}],
+  16.0: [{lv: 6, size: "小"}], 17.0: [{lv: 7, size: "小"}], 18.0: [{lv: 8, size: "小"}], 19.0: [{lv: 9, size: "小"}], 20.0: [{lv: 10, size: "小"}],
+  21.5: [{lv: 1, size: "中"}], 23.0: [{lv: 2, size: "中"}], 24.5: [{lv: 3, size: "中"}], 26.0: [{lv: 4, size: "中"}], 27.5: [{lv: 5, size: "中"}],
+  29.0: [{lv: 6, size: "中"}], 30.5: [{lv: 7, size: "中"}], 32.0: [{lv: 1, size: "大"}, {lv: 8, size: "中"}], 33.5: [{lv: 9, size: "中"}], 34.0: [{lv: 2, size: "大"}],
+  35.0: [{lv: 10, size: "中"}], 36.0: [{lv: 3, size: "大"}], 38.0: [{lv: 4, size: "大"}], 40.0: [{lv: 5, size: "大"}], 42.0: [{lv: 6, size: "大"}],
+  44.0: [{lv: 7, size: "大"}], 46.0: [{lv: 8, size: "大"}], 48.0: [{lv: 9, size: "大"}], 50.0: [{lv: 10, size: "大"}], 54.0: [{lv: 1, size: "極大"}],
+  58.0: [{lv: 2, size: "極大"}], 62.0: [{lv: 3, size: "極大"}], 66.0: [{lv: 4, size: "極大"}], 70.0: [{lv: 5, size: "極大"}], 74.0: [{lv: 6, size: "極大"}],
+  78.0: [{lv: 7, size: "極大"}], 82.0: [{lv: 8, size: "極大"}], 86.0: [{lv: 9, size: "極大"}], 90.0: [{lv: 10, size: "極大"}]
+};
+
+// ダメUPバフのレベル・サイズ対応表（通常）
+const normalDamageUpLevels = {
+  1.4: [{lv: 1, size: "極小", type: "ダメUP"}], 1.5: [{lv: 2, size: "極小", type: "ダメUP"}], 1.6: [{lv: 3, size: "極小", type: "ダメUP"}], 1.8: [{lv: 4, size: "極小", type: "ダメUP"}],
+  1.9: [{lv: 5, size: "極小", type: "ダメUP"}], 2.0: [{lv: 6, size: "極小", type: "ダメUP"}], 2.1: [{lv: 7, size: "極小", type: "ダメUP"}], 2.3: [{lv: 8, size: "極小", type: "ダメUP"}],
+  2.4: [{lv: 9, size: "極小", type: "ダメUP"}], 2.5: [{lv: 10, size: "極小", type: "ダメUP"}], 2.8: [{lv: 1, size: "小", type: "ダメUP"}], 3.0: [{lv: 2, size: "小", type: "ダメUP"}],
+  3.3: [{lv: 3, size: "小", type: "ダメUP"}], 3.5: [{lv: 4, size: "小", type: "ダメUP"}], 3.8: [{lv: 5, size: "小", type: "ダメUP"}], 4.0: [{lv: 6, size: "小", type: "ダメUP"}],
+  4.3: [{lv: 7, size: "小", type: "ダメUP"}], 4.5: [{lv: 8, size: "小", type: "ダメUP"}], 4.8: [{lv: 9, size: "小", type: "ダメUP"}], 5.0: [{lv: 10, size: "小", type: "ダメUP"}],
+  5.4: [{lv: 1, size: "中", type: "ダメUP"}], 5.8: [{lv: 2, size: "中", type: "ダメUP"}], 6.1: [{lv: 3, size: "中", type: "ダメUP"}], 6.5: [{lv: 4, size: "中", type: "ダメUP"}],
+  6.9: [{lv: 5, size: "中", type: "ダメUP"}], 7.3: [{lv: 6, size: "中", type: "ダメUP"}], 7.6: [{lv: 7, size: "中", type: "ダメUP"}], 8.0: [{lv: 8, size: "中", type: "ダメUP"}],
+  8.4: [{lv: 9, size: "中", type: "ダメUP"}], 8.8: [{lv: 10, size: "中", type: "ダメUP"}], 10.0: [{lv: 5, size: "大", type: "ダメUP"}], 10.5: [{lv: 6, size: "大", type: "ダメUP"}],
+  11.0: [{lv: 7, size: "大", type: "ダメUP"}], 11.5: [{lv: 8, size: "大", type: "ダメUP"}], 12.0: [{lv: 9, size: "大", type: "ダメUP"}], 12.5: [{lv: 10, size: "大", type: "ダメUP"}],
+  13.5: [{lv: 1, size: "極大", type: "ダメUP"}], 14.5: [{lv: 2, size: "極大", type: "ダメUP"}], 15.5: [{lv: 3, size: "極大", type: "ダメUP"}], 16.5: [{lv: 4, size: "極大", type: "ダメUP"}],
+  17.5: [{lv: 5, size: "極大", type: "ダメUP"}], 18.5: [{lv: 6, size: "極大", type: "ダメUP"}], 19.5: [{lv: 7, size: "極大", type: "ダメUP"}], 20.5: [{lv: 8, size: "極大", type: "ダメUP"}],
+  21.5: [{lv: 9, size: "極大", type: "ダメUP"}], 22.5: [{lv: 10, size: "極大", type: "ダメUP"}]
+};
+
+// 属性ダメUPバフのレベル・サイズ対応表
+const attributeDamageUpLevels = {
+  1.7: [{lv: 1, size: "極小", type: "属性ダメUP"}], 1.8: [{lv: 2, size: "極小", type: "属性ダメUP"}], 2.0: [{lv: 3, size: "極小", type: "属性ダメUP"}], 2.1: [{lv: 4, size: "極小", type: "属性ダメUP"}],
+  2.3: [{lv: 5, size: "極小", type: "属性ダメUP"}], 2.4: [{lv: 6, size: "極小", type: "属性ダメUP"}], 2.6: [{lv: 7, size: "極小", type: "属性ダメUP"}], 2.7: [{lv: 8, size: "極小", type: "属性ダメUP"}],
+  2.9: [{lv: 9, size: "極小", type: "属性ダメUP"}], 3.0: [{lv: 10, size: "極小", type: "属性ダメUP"}], 3.3: [{lv: 1, size: "小", type: "属性ダメUP"}], 3.6: [{lv: 2, size: "小", type: "属性ダメUP"}],
+  3.9: [{lv: 3, size: "小", type: "属性ダメUP"}], 4.2: [{lv: 4, size: "小", type: "属性ダメUP"}], 4.5: [{lv: 5, size: "小", type: "属性ダメUP"}], 4.8: [{lv: 6, size: "小", type: "属性ダメUP"}],
+  5.1: [{lv: 7, size: "小", type: "属性ダメUP"}], 5.4: [{lv: 8, size: "小", type: "属性ダメUP"}], 5.7: [{lv: 9, size: "小", type: "属性ダメUP"}], 6.0: [{lv: 10, size: "小", type: "属性ダメUP"}],
+  6.5: [{lv: 1, size: "中", type: "属性ダメUP"}], 6.9: [{lv: 2, size: "中", type: "属性ダメUP"}], 7.4: [{lv: 3, size: "中", type: "属性ダメUP"}], 7.8: [{lv: 4, size: "中", type: "属性ダメUP"}],
+  8.3: [{lv: 5, size: "中", type: "属性ダメUP"}], 8.7: [{lv: 6, size: "中", type: "属性ダメUP"}], 9.2: [{lv: 7, size: "中", type: "属性ダメUP"}], 9.6: [{lv: 8, size: "中", type: "属性ダメUP"}],
+  10.1: [{lv: 9, size: "中", type: "属性ダメUP"}], 10.5: [{lv: 10, size: "中", type: "属性ダメUP"}], 11.4: [{lv: 4, size: "大", type: "属性ダメUP"}], 12.0: [{lv: 5, size: "大", type: "属性ダメUP"}],
+  12.6: [{lv: 6, size: "大", type: "属性ダメUP"}], 13.2: [{lv: 7, size: "大", type: "属性ダメUP"}], 13.8: [{lv: 8, size: "大", type: "属性ダメUP"}], 14.4: [{lv: 9, size: "大", type: "属性ダメUP"}],
+  15.0: [{lv: 10, size: "大", type: "属性ダメUP"}], 16.2: [{lv: 1, size: "極大", type: "属性ダメUP"}], 17.4: [{lv: 2, size: "極大", type: "属性ダメUP"}], 18.6: [{lv: 3, size: "極大", type: "属性ダメUP"}],
+  19.8: [{lv: 4, size: "極大", type: "属性ダメUP"}], 21.0: [{lv: 5, size: "極大", type: "属性ダメUP"}], 22.2: [{lv: 6, size: "極大", type: "属性ダメUP"}], 23.4: [{lv: 7, size: "極大", type: "属性ダメUP"}],
+  24.6: [{lv: 8, size: "極大", type: "属性ダメUP"}], 25.8: [{lv: 9, size: "極大", type: "属性ダメUP"}], 27.0: [{lv: 10, size: "極大", type: "属性ダメUP"}]
+};
 
 const attackMultipliers = {
   "弱単発": { power: 0.75, combo: 1.0 },
@@ -677,12 +724,35 @@ function updateResults() {
     document.querySelector('h2:last-of-type').after(resultDiv);
   }
 
+  // バフ値に対応するレベル・サイズを取得する関数
+  function getBuffInfo(value, isAtkUp) {
+    if (isAtkUp) {
+      const matches = atkUpLevels[value];
+      if (matches && matches.length > 0) {
+        return matches.map(match => `LV${match.lv}(${match.size})`).join('\n');
+      }
+    } else {
+      // ダメUPの場合、通常と属性の両方をチェック
+      const normalMatches = normalDamageUpLevels[value] || [];
+      const attributeMatches = attributeDamageUpLevels[value] || [];
+      const allMatches = [...normalMatches, ...attributeMatches];
+      
+      if (allMatches.length > 0) {
+        return allMatches.map(match => `${match.type} LV${match.lv}(${match.size})`).join('\n');
+      }
+    }
+    return '該当なし';
+  }
+
   // バフ設定テーブルの値を更新
-  const updateBuffValue = (elementId, value) => {
+  const updateBuffValue = (elementId, value, isAtkUp) => {
     const element = document.getElementById(elementId);
-    if (element) {
-      const safeValue = Number.isFinite(value) ? Math.max(0, Math.min(50, value)) : 0;
-      element.value = safeValue.toFixed(1);
+    const levelElement = document.getElementById(elementId + '-level');
+    if (element && levelElement) {
+      const safeValue = Number.isFinite(value) ? value : 0;
+      const buffInfo = getBuffInfo(safeValue, isAtkUp);
+      element.value = `${safeValue.toFixed(1)}%`;
+      levelElement.textContent = buffInfo;
     }
   };
 
@@ -693,14 +763,14 @@ function updateResults() {
   }
 
   // ATKUPバフ値の更新
-  updateBuffValue('atkup1', result.atkupValues[0]);
-  updateBuffValue('atkup2', result.atkupValues[1]);
-  updateBuffValue('atkup3', result.atkupValues[2]);
+  updateBuffValue('atkup1', result.atkupValues[0], true);
+  updateBuffValue('atkup2', result.atkupValues[1], true);
+  updateBuffValue('atkup3', result.atkupValues[2], true);
 
   // ダメUPバフ値の更新
-  updateBuffValue('dameup1', result.damageUpValues[0]);
-  updateBuffValue('dameup2', result.damageUpValues[1]);
-  updateBuffValue('dameup3', result.damageUpValues[2]);
+  updateBuffValue('dameup1', result.damageUpValues[0], false);
+  updateBuffValue('dameup2', result.damageUpValues[1], false);
+  updateBuffValue('dameup3', result.damageUpValues[2], false);
 }
 
 async function loadInitialDataFromCSV() {
