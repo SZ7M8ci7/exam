@@ -220,7 +220,7 @@ function calculateError(params, rowData) {
       const diffPercent = diff / damage;
       
       if (diffPercent > 0.05) {
-        // 5％を超えた場合、強烈なペナルティ（通常の10倍）
+        // 5％を超えた場合、強烈なペナルティ（通常の100倍）
         return sum + Math.pow(d - damage, 2) * 100;
       } else {
         // 5％以内の場合、通常の二乗誤差
