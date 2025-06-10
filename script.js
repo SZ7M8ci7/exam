@@ -213,7 +213,20 @@ function calculateError(params, rowData) {
     }
 
     const damage = calculateDamage(atk, rowAtkupValues, rowDamageUpValues, row.attackType, row.attribute);
-    const rowError = row.damages.reduce((sum, d) => sum + Math.pow(d - damage, 2), 0);
+    
+    // ±5％を超えた場合の強烈なペナルティ適用
+    const rowError = row.damages.reduce((sum, d) => {
+      const diff = Math.abs(d - damage);
+      const diffPercent = diff / damage;
+      
+      if (diffPercent > 0.05) {
+        // 5％を超えた場合、強烈なペナルティ（通常の10倍）
+        return sum + Math.pow(d - damage, 2) * 100;
+      } else {
+        // 5％以内の場合、通常の二乗誤差
+        return sum + Math.pow(d - damage, 2);
+      }
+    }, 0);
     
     // より適切な重み付けを計算
     let weight = 1.0;
